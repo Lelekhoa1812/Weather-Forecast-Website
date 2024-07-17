@@ -8,7 +8,7 @@ const resultsDiv = document.querySelector(".results");
 const body = document.body;
 const title = document.querySelector("h1");
 
-const API_KEY = "88f987e710fcb56cf83d1bf295d3f707"; // API key for OpenWeatherMap API (username: liamle1812, yup, it just a free account limited on searching attempt! ^^)
+const API_KEY = "88f987e710fcb56cf83d1bf295d3f707"; // API key for OpenWeatherMap API
 const API_URL = "https://api.openweathermap.org/data/2.5/weather?"; // URL for OpenWeatherMap API
 
 const createWeatherCard = (cityName, weatherItem, index) => {
@@ -65,7 +65,12 @@ const getWeatherDetails = (cityName, latitude, longitude) => {
 
         // Determine time of day and weather conditions
         const currentWeather = fiveDaysForecast[0];
-        const localTime = new Date(currentWeather.dt_txt).getHours(); // Get local time of the city
+        const cityTimezoneOffset = data.city.timezone; // Get city's timezone offset in seconds
+        const currentUTCTime = Date.now(); // Get current UTC time in milliseconds
+        const localTime = new Date(currentUTCTime + (cityTimezoneOffset * 1000)).getUTCHours(); // Convert to local time in the city's timezone
+
+        // Process timing to make changes at the UI
+        console.log("Current time at " + cityName + " is " + localTime + " o'clock") // Debugger
         const isDaytime = localTime >= 6 && localTime < 18; // Between 6.00 and 18.00 is daytime, else is nighttime
         const weatherMain = currentWeather.weather[0].main.toLowerCase();
 
